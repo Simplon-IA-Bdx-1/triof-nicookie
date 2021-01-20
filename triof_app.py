@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from src.utils import (
     open_waste_slot,
     close_waste_slot,
@@ -8,7 +8,6 @@ from src.utils import (
 )
 from src.client import predictor
 
-IMAGE_URI = take_trash_picture()
 
 app = Flask(__name__)
 
@@ -22,15 +21,17 @@ def home():
 def insert():
 
     open_waste_slot()
+    image_uri = take_trash_picture()
 
-    return render_template('insert.html', file=IMAGE_URI)
+    return render_template('insert.html', file=image_uri)
 
 
 @app.route('/waste/pick-type')
 def pick_type():
     close_waste_slot()
+    image_uri = request.args.get('uri')
     with open(
-        str(os.path.join("./camera", IMAGE_URI)), "rb"
+        str(os.path.join("./camera", image_uri)), "rb"
     ) as image_contents:
         results = predictor.classify_image(
             "22b0f2f0-d422-43d3-8682-2d7944d016ae",
@@ -47,21 +48,29 @@ def pick_type():
     proba = '{:.2f}%'.format(results.predictions[0].probability * 100)
 
     data = {
-        'image': IMAGE_URI,
+        'image': image_uri,
         'tag_name': tag_name,
         'proba': proba
     }
-    process_waste(results.predictions[0].tag_name)
-
     return render_template('type.html', data=data)
 
 
-# @app.route('/confirmation', methods=['POST'])
-# def confirmation():
-#     waste_type = request.form['type']
+@app.route('/confirmation')
+def confirmation():
+    waste_type = request.args.get('waste_type')
+    antimap = {
+        'une bouteille en plastique': 'bottles',
+        'des couverts en plastique': 'cutlery',
+        'un gobelet en plastique': 'glass'
+    }
 
-#     process_waste(waste_type)
-#     return render_template('confirmation.html')
+    process_waste(antimap[waste_type])
+    return render_template('confirmation.html')
+
+
+@app.route('/infirmation')
+def infirmation():
+    return render_template('infirmation.html')
 
 
 if __name__ == "__main__":

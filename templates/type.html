@@ -30,25 +30,26 @@
 								Je suis sûr à {{data['proba']}} <br>
 								que vous avez inséré {{data['tag_name']}}
 							</p>
-							<p>Merci :)</p>
+						</div>
+						<div class="check">
+							<div>
+								<ul class="actions special">
+									<li><a href="/confirmation?waste_type={{data['tag_name']}}" class="button">Oui</a></li>
+									<li><a href="/infirmation" class="button">Non</a></li>
+								</ul>
+							</div>
 						</div>
 					</section>
 
 			</div>
 
 		<!-- Scripts -->
-        <script>
-            if ('addEventListener' in window) {
-                window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-preload\b/, ''); });
-                document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
-            }
-
-            function back(){
-                window.location.href= "/"
-            }
-
-            setTimeout(back, 10000)
-        </script>
+		<script>
+			if ('addEventListener' in window) {
+				window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-preload\b/, ''); });
+				document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
+			}
+		</script>
 
 	</body>
 </html>
